@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: bank-statement-api
+    
+  datasource:
+    url: jdbc:postgresql://localhost:5432/bankdb
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  # We’re using Spring Data JDBC
+  data:
+    jdbc:
+      dialect: postgresql
+
+  main:
+    banner-mode: console
+
+  batch:
+    jdbc:
+      initialize-schema: always
+
+logging:
+  level:
+    org.springframework.jdbc.core: DEBUG
