@@ -34,16 +34,18 @@ public class BatchConfig {
     private StatementService statementService;
 
     // 1️⃣ Reader - fetches customers from DB
+    
     @Bean
     public ItemReader<Customer> customerReader() {
-        return new RepositoryItemReaderBuilder<Customer>()
-                .name("customerReader")
-                .repository(customerRepository)
-                .methodName("findAll")
-                .arguments(Collections.singletonList(Sort.unsorted()))
-                .sorts(Collections.emptyMap())
-                .build();
+    return new RepositoryItemReaderBuilder<Customer>()
+            .name("customerReader")
+            .repository(customerRepository)
+            .methodName("findAll") // this calls findAll(Pageable)
+            .pageSize(10)          // number of records per page
+            .sorts(Collections.singletonMap("id", Sort.Direction.ASC))
+            .build();
     }
+
 
     // 2️⃣ Processor - generates statement for each customer
     @Bean
@@ -71,7 +73,7 @@ public class BatchConfig {
                 .processor(statementProcessor())
                 .writer(customerWriter())
                 .taskExecutor(new SimpleAsyncTaskExecutor("batch-thread-"))
-                .throttleLimit(4) // 🔥 Run 4 customers in parallel
+                .throttleLimit(200) // 🔥 Run 4 customers in parallel
                 .build();
     }
 
